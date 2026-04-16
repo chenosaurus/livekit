@@ -35,6 +35,9 @@ import (
 const (
 	goChecksumFile = ".checksumgo"
 	imageName      = "livekit/livekit-server"
+	// google/wire was archived after v0.7.0; pin a post-tag commit so builds
+	// don't depend on whatever wire binary happens to already be installed.
+	wireVersion = "v0.6.1-0.20250821140140-5c5c92a1c5f8"
 )
 
 // Default target to run when none is specified
@@ -230,10 +233,14 @@ func installDeps() error {
 
 func installTools(force bool) error {
 	tools := map[string]string{
-		"github.com/google/wire/cmd/wire": "latest",
+		"github.com/google/wire/cmd/wire": wireVersion,
 	}
 	for t, v := range tools {
-		if err := mageutil.InstallTool(t, v, force); err != nil {
+		toolForce := force
+		if t == "github.com/google/wire/cmd/wire" {
+			toolForce = true
+		}
+		if err := mageutil.InstallTool(t, v, toolForce); err != nil {
 			return err
 		}
 	}

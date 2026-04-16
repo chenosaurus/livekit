@@ -285,6 +285,18 @@ keys:
 #   # Prefix used to generate WHIP URLs for WHIP ingress.
 #   whip_base_url: "http://my.domain.com/whip"
 
+# moq server
+# moq:
+#   enabled: true
+#   port: 7882
+#   # defaults to the main bind_addresses when omitted
+#   bind_addresses:
+#     - ""
+#   # optional; if omitted, the server generates an ephemeral self-signed cert at startup.
+#   cert_file: /path/to/cert.pem
+#   key_file: /path/to/key.pem
+#   max_sessions: 100
+
 # Region of the current node. Required if using regionaware node selector
 # region: us-west-2
 
