@@ -18,9 +18,11 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -218,8 +220,16 @@ func generateWire() error {
 	}
 	cmd := exec.Command(wire)
 	cmd.Dir = "pkg/service"
-	mageutil.ConnectStd(cmd)
+	var stderr bytes.Buffer
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = io.MultiWriter(os.Stderr, &stderr)
 	if err := cmd.Run(); err != nil {
+		if strings.Contains(stderr.String(), `package "golang.org/x/sys/unix" without types was imported from "github.com/florianl/go-tc/internal/unix"`) {
+			if _, statErr := os.Stat("pkg/service/wire_gen.go"); statErr == nil {
+				fmt.Println("wire hit a known go/packages typing failure on golang.org/x/sys/unix; using checked-in pkg/service/wire_gen.go")
+				return nil
+			}
+		}
 		return err
 	}
 
