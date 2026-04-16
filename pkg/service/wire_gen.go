@@ -129,10 +129,6 @@ func InitializeServer(conf *config.Config, currentNode routing.LocalNode) (*Live
 	if err != nil {
 		return nil, err
 	}
-	agentService, err := NewAgentService(conf, currentNode, messageBus, keyProvider)
-	if err != nil {
-		return nil, err
-	}
 	agentConfig := getAgentConfig(conf)
 	client, err := agent.NewAgentClient(messageBus, agentConfig)
 	if err != nil {
@@ -146,6 +142,14 @@ func InitializeServer(conf *config.Config, currentNode routing.LocalNode) (*Live
 	if err != nil {
 		return nil, err
 	}
+	moqService, err := NewMOQService(conf, roomManager, keyProvider)
+	if err != nil {
+		return nil, err
+	}
+	agentService, err := NewAgentService(conf, currentNode, messageBus, keyProvider)
+	if err != nil {
+		return nil, err
+	}
 	signalServer, err := NewDefaultSignalServer(currentNode, messageBus, signalRelayConfig, router, roomManager)
 	if err != nil {
 		return nil, err
@@ -155,7 +159,7 @@ func InitializeServer(conf *config.Config, currentNode routing.LocalNode) (*Live
 	if err != nil {
 		return nil, err
 	}
-	livekitServer, err := NewLivekitServer(conf, roomService, agentDispatchService, egressService, ingressService, sipService, ioInfoService, rtcService, serviceWHIPService, agentService, keyProvider, router, roomManager, signalServer, server, currentNode)
+	livekitServer, err := NewLivekitServer(conf, roomService, agentDispatchService, egressService, ingressService, sipService, ioInfoService, rtcService, serviceWHIPService, moqService, agentService, keyProvider, router, roomManager, signalServer, server, currentNode)
 	if err != nil {
 		return nil, err
 	}

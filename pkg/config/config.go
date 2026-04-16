@@ -66,6 +66,7 @@ type Config struct {
 	Room           RoomConfig               `yaml:"room,omitempty"`
 	TURN           TURNConfig               `yaml:"turn,omitempty"`
 	Ingress        IngressConfig            `yaml:"ingress,omitempty"`
+	MOQ            MOQConfig                `yaml:"moq,omitempty"`
 	SIP            SIPConfig                `yaml:"sip,omitempty"`
 	WebHook        webhook.WebHookConfig    `yaml:"webhook,omitempty"`
 	NodeSelector   NodeSelectorConfig       `yaml:"node_selector,omitempty"`
@@ -300,6 +301,16 @@ type IngressConfig struct {
 	WHIPBaseURL string `yaml:"whip_base_url,omitempty"`
 }
 
+type MOQConfig struct {
+	Enabled            bool     `yaml:"enabled,omitempty"`
+	Port               uint32   `yaml:"port,omitempty"`
+	BindAddresses      []string `yaml:"bind_addresses,omitempty"`
+	CertFile           string   `yaml:"cert_file,omitempty"`
+	KeyFile            string   `yaml:"key_file,omitempty"`
+	MaxSessions        int      `yaml:"max_sessions,omitempty"`
+	InsecureSkipVerify bool     `yaml:"insecure_skip_verify,omitempty"`
+}
+
 type SIPConfig struct{}
 
 type APIConfig struct {
@@ -414,6 +425,10 @@ var DefaultConfig = Config{
 		MaxRoomNameLength:            256,
 		MaxParticipantIdentityLength: 256,
 		MaxParticipantNameLength:     256,
+	},
+	MOQ: MOQConfig{
+		Port:        7882,
+		MaxSessions: 100,
 	},
 	Logging: LoggingConfig{
 		PionLevel: "error",

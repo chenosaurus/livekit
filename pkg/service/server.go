@@ -50,6 +50,7 @@ type LivekitServer struct {
 	ioService    *IOInfoService
 	rtcService   *RTCService
 	whipService  *WHIPService
+	moqService   *MOQService
 	agentService *AgentService
 	httpServer   *http.Server
 	promServer   *http.Server
@@ -72,6 +73,7 @@ func NewLivekitServer(conf *config.Config,
 	ioService *IOInfoService,
 	rtcService *RTCService,
 	whipService *WHIPService,
+	moqService *MOQService,
 	agentService *AgentService,
 	keyProvider auth.KeyProvider,
 	router routing.Router,
@@ -85,6 +87,7 @@ func NewLivekitServer(conf *config.Config,
 		ioService:    ioService,
 		rtcService:   rtcService,
 		whipService:  whipService,
+		moqService:   moqService,
 		agentService: agentService,
 		router:       router,
 		roomManager:  roomManager,
@@ -275,6 +278,12 @@ func (s *LivekitServer) Start() error {
 		return err
 	}
 
+	if s.moqService != nil {
+		if err := s.moqService.Start(); err != nil {
+			return err
+		}
+	}
+
 	httpGroup := &errgroup.Group{}
 	for _, ln := range listeners {
 		l := ln
@@ -309,6 +318,9 @@ func (s *LivekitServer) Start() error {
 
 	s.roomManager.Stop()
 	s.signalServer.Stop()
+	if s.moqService != nil {
+		s.moqService.Stop()
+	}
 	s.ioService.Stop()
 
 	close(s.closedChan)

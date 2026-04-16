@@ -80,6 +80,7 @@ func InitializeServer(conf *config.Config, currentNode routing.LocalNode) (*Live
 		NewRoomService,
 		NewRTCService,
 		NewWHIPService,
+		NewMOQService,
 		NewAgentService,
 		NewAgentDispatchService,
 		getAgentConfig,
